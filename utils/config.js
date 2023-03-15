@@ -49,7 +49,7 @@ export const productList = [
     weight: 0, // TODO
     width: 90,
     height: 200,
-    price: 4.5 * 2,
+    price: 45 * 2,
     itemCountPerLoad: 60,
     maxStack: 2,
     representedColor: "#FFAFAF",
