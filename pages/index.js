@@ -31,6 +31,8 @@ import {
 import { ItemVisualization } from "../components";
 import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
 import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function Home() {
   //     {
@@ -44,6 +46,7 @@ export default function Home() {
   const [items, setItems] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedProductLoadCount, setSelectedProductLoadCount] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   const result = useMemo(() => {
     const reevaluatedItems = [];
@@ -111,57 +114,74 @@ export default function Home() {
             <Typography variant="h5" fontWeight="bold">
               รายการสินค้า
             </Typography>
+            <TextField
+              InputProps={{
+                startAdornment: <SearchIcon />,
+                endAdornment: (
+                  <IconButton
+                    onClick={() => {
+                      setSearchValue("");
+                    }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                ),
+              }}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onCancelSearch={() => setSearchValue("")}
+            />
             <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
               <Table size="small" aria-label="simple table">
                 <TableHead>
                   <TableRow>
                     <TableCell>รายการสินค้า</TableCell>
                     <TableCell align="right">น้ำหนัก</TableCell>
-                    <TableCell align="right">
-                      พื้นที่แนวราบ (กว้าง x ยาว)
-                    </TableCell>
+                    <TableCell align="right">พื้นที่ (กว้าง x ยาว)</TableCell>
                     <TableCell align="right">ราคาต่อชิ้น</TableCell>
                     <TableCell align="right">จำนวนต่อแพ็ค</TableCell>
                     <TableCell align="right">วางซ้อนได้สูงสุด</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {productList.map((product, index) => (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        "&:last-child td, &:last-child th": { border: 0 },
-                        cursor: "pointer",
-                        ":hover": {
+                  {productList
+                    .filter((p) => p.label.includes(searchValue))
+                    .map((product, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
                           cursor: "pointer",
+                          ":hover": {
+                            cursor: "pointer",
+                            backgroundColor:
+                              selectedProduct?.label &&
+                              selectedProduct.label === product.label
+                                ? undefined
+                                : "#fcf2d7",
+                          },
                           backgroundColor:
                             selectedProduct?.label &&
                             selectedProduct.label === product.label
-                              ? undefined
-                              : "#fcf2d7",
-                        },
-                        backgroundColor:
-                          selectedProduct?.label &&
-                          selectedProduct.label === product.label
-                            ? "#FFAA21"
-                            : undefined,
-                      }}
-                      onClick={() => {
-                        setSelectedProduct(product);
-                      }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {product.label}
-                      </TableCell>
-                      <TableCell align="right">{product.weight}</TableCell>
-                      <TableCell align="right">{`${product.width} x ${product.height}`}</TableCell>
-                      <TableCell align="right">{product.price}</TableCell>
-                      <TableCell align="right">
-                        {product.itemCountPerLoad}
-                      </TableCell>
-                      <TableCell align="right">{product.maxStack}</TableCell>
-                    </TableRow>
-                  ))}
+                              ? "#FFAA21"
+                              : undefined,
+                        }}
+                        onClick={() => {
+                          setSelectedProduct(product);
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {product.label}
+                        </TableCell>
+                        <TableCell align="right">{product.weight}</TableCell>
+                        <TableCell align="right">{`${product.width} x ${product.height}`}</TableCell>
+                        <TableCell align="right">{product.price}</TableCell>
+                        <TableCell align="right">
+                          {product.itemCountPerLoad}
+                        </TableCell>
+                        <TableCell align="right">{product.maxStack}</TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -218,6 +238,7 @@ export default function Home() {
                     md: "block",
                   },
                 }}
+                variant="contained"
                 onClick={() => {
                   if (selectedProduct && selectedProductLoadCount) {
                     setItems((prev) => {
@@ -253,6 +274,7 @@ export default function Home() {
               </Button>
             </Box>
             <Button
+              variant="contained"
               sx={{
                 display: {
                   xs: "block",
@@ -346,9 +368,7 @@ export default function Home() {
                   <TableRow>
                     <TableCell>รายการสินค้า</TableCell>
                     <TableCell align="right">น้ำหนัก</TableCell>
-                    <TableCell align="right">
-                      พื้นที่แนวราบ (กว้าง x ยาว)
-                    </TableCell>
+                    <TableCell align="right">พื้นที่ (กว้าง x ยาว)</TableCell>
                     <TableCell align="right">จำนวนแพ็ค</TableCell>
                     <TableCell align="right">จำนวนชิ้นรวม</TableCell>
                     <TableCell align="right">มูลค่ารวม</TableCell>
@@ -390,25 +410,28 @@ export default function Home() {
                           >
                             <RemoveCircleRoundedIcon />
                           </IconButton>
-                          {/* <TextField
-                          label="จำนวนแพ็ค"
-                          sx={{ minWidth: "80px" }}
-                          type="number"
-                          value={item.loadCount}
-                          onChange={(e) => {
-                            if (e.target.value && e.target.value > 0) {
-                              setItems((prev) => {
-                                return prev.map((ea) => {
-                                  if (ea.label === item.label) {
-                                    ea.loadCount = e.target.value;
-                                  }
-                                  return ea;
+                          <TextField
+                            label="จำนวนแพ็ค"
+                            sx={{ minWidth: "80px" }}
+                            type="number"
+                            value={item.loadCount}
+                            onChange={(e) => {
+                              if (e.target.value && e.target.value > 0) {
+                                setItems((prev) => {
+                                  return prev.map((ea) => {
+                                    if (ea.label === item.label) {
+                                      ea.loadCount = parseInt(
+                                        e.target.value,
+                                        10
+                                      );
+                                    }
+                                    return ea;
+                                  });
                                 });
-                              });
-                            }
-                          }}
-                        /> */}
-                          <Typography>{item.loadCount}</Typography>
+                              }
+                            }}
+                          />
+                          {/* <Typography>{item.loadCount}</Typography> */}
                           <IconButton
                             onClick={() => {
                               setItems((prev) => {
@@ -433,13 +456,15 @@ export default function Home() {
                       </TableCell>
                       <TableCell align="right">
                         <Button
+                          variant="contained"
+                          color="error"
                           onClick={() => {
                             setItems((prev) =>
                               prev.filter((each, i) => i !== index)
                             );
                           }}
                         >
-                          ลบสินค้า
+                          ลบ
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -553,7 +578,7 @@ export default function Home() {
                     </Box>
                   </Box>
                   <Typography mt={1}>
-                    การใช้สอยพื้นที่แนวราบ:{" "}
+                    การใช้สอยพื้นที่:{" "}
                     {(
                       (e.reduce((acc, cur) => {
                         return (acc += cur.height * cur.width);
@@ -614,7 +639,7 @@ export default function Home() {
                                 <Typography>
                                   สามารถเพิ่ม {each.item.label} ได้อีก{" "}
                                   {each.item.availableStack} แพ็ค{" "}
-                                  โดยไม่ทำให้เสียพื้นที่แนวราบเพิ่ม
+                                  โดยไม่ทำให้เสียพื้นที่เพิ่ม
                                 </Typography>
                               );
                             })}
