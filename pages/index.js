@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import { packer, SelectionStrategy } from "guillotine-packer";
+import { packer, SelectionStrategy, SplitStrategy } from "guillotine-packer";
 import {
   Autocomplete,
   Box,
@@ -72,7 +72,10 @@ export default function Home() {
             ...reevaluatedItems.sort((a, b) => b.loadCount - a.loadCount),
           ],
         },
-        { selectionStrategy: SelectionStrategy.BEST_AREA_FIT }
+        {
+          selectionStrategy: SelectionStrategy.BEST_AREA_FIT,
+          splitStrategy: SplitStrategy.LongLeftoverAxisSplit,
+        }
       );
       return calculation;
     } catch (e) {
@@ -108,7 +111,7 @@ export default function Home() {
             <Typography variant="h5" fontWeight="bold">
               รายการสินค้า
             </Typography>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
               <Table size="small" aria-label="simple table">
                 <TableHead>
                   <TableRow>
@@ -131,7 +134,11 @@ export default function Home() {
                         cursor: "pointer",
                         ":hover": {
                           cursor: "pointer",
-                          backgroundColor: "#fcf2d7",
+                          backgroundColor:
+                            selectedProduct?.label &&
+                            selectedProduct.label === product.label
+                              ? undefined
+                              : "#fcf2d7",
                         },
                         backgroundColor:
                           selectedProduct?.label &&
@@ -180,7 +187,7 @@ export default function Home() {
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
-                sx={{ width: "300px" }}
+                sx={{ minWidth: "250px" }}
                 options={productList}
                 renderInput={(params) => (
                   <TextField {...params} label="สินค้า" />
@@ -200,19 +207,17 @@ export default function Home() {
                 label="จำนวนแพ็ค"
                 type="number"
                 value={selectedProductLoadCount}
-                // helperText={
-                //   selectedProductLoadCount
-                //     ? `จำนวนชิ้นรวม: ${
-                //         selectedProductLoadCount *
-                //         selectedProductDetail?.itemCountPerLoad
-                //       }`
-                //     : undefined
-                // }
                 onChange={(e) => {
                   setSelectedProductLoadCount(e.target.value);
                 }}
               />
               <Button
+                sx={{
+                  display: {
+                    xs: "none",
+                    md: "block",
+                  },
+                }}
                 onClick={() => {
                   if (selectedProduct && selectedProductLoadCount) {
                     setItems((prev) => {
@@ -247,24 +252,71 @@ export default function Home() {
                 เพิ่มลงตะกร้า
               </Button>
             </Box>
+            <Button
+              sx={{
+                display: {
+                  xs: "block",
+                  md: "none",
+                },
+              }}
+              onClick={() => {
+                if (selectedProduct && selectedProductLoadCount) {
+                  setItems((prev) => {
+                    if (items.find((e) => e.label === selectedProduct.label)) {
+                      return items.map((ea) => {
+                        if (ea.label === selectedProduct.label) {
+                          ea.loadCount += parseInt(
+                            selectedProductLoadCount,
+                            10
+                          );
+                        }
+                        return ea;
+                      });
+                    }
+
+                    return [
+                      ...prev,
+                      {
+                        ...selectedProduct,
+                        loadCount: parseInt(selectedProductLoadCount, 10),
+                        itemCountPerLoad: selectedProduct.itemCountPerLoad,
+                      },
+                    ];
+                  });
+                  setSelectedProductLoadCount("");
+                  setSelectedProduct("");
+                }
+              }}
+            >
+              เพิ่มลงตะกร้า
+            </Button>
             {!!selectedProductDetail && (
               <Box display="flex" flexDirection="column">
                 <Typography variant="body2">รายละเอียดสินค้า</Typography>
 
                 <Typography variant="body2" mt={1}>
+                  รายการสินค้า: {selectedProductDetail.label}
+                </Typography>
+                <Typography variant="body2" mt={1}>
+                  จำนวนต่อแพ็ค: {selectedProductDetail.itemCountPerLoad}
+                </Typography>
+                <Typography variant="body2" mt={1}>
+                  ราคาต่อชิ้น: {selectedProductDetail.price}
+                </Typography>
+                <Typography variant="body2" mt={1} fontWeight="bold">
                   จำนวนชิ้นรวม:{" "}
                   {selectedProductLoadCount *
                     selectedProductDetail?.itemCountPerLoad}{" "}
                   ชิ้น
                 </Typography>
-                <Typography variant="body2" mt={1}>
+                <Typography variant="body2" mt={1} fontWeight="bold">
                   น้ำหนักรวม:{" "}
                   {selectedProductDetail.weight *
                     selectedProductLoadCount *
                     selectedProductDetail?.itemCountPerLoad}{" "}
                   กก.
                 </Typography>
-                <Typography variant="body2" mt={1}>
+                <Typography variant="body2" mt={1} fontWeight="bold">
                   มูลค่ารวม:{" "}
                   {selectedProductLoadCount *
                     selectedProductDetail?.itemCountPerLoad *
@@ -436,9 +488,7 @@ export default function Home() {
                     if (e.label === found.label) {
                       e.item.availableStack +=
                         cur.item.maxStack - cur.item.loadCount;
-                      console.log(e);
                       e.item.loadCount += cur.item.loadCount;
-                      console.log(e);
                     }
                   });
                 } else {

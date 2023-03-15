@@ -46,7 +46,7 @@ function ItemVisualization({
       // Draw the item label on top of the block
       ctx.fillStyle = "white";
       ctx.font = `${40}px sans-serif`;
-      ctx.fillText(loadCount, item.x + 20, item.y + 60);
+      ctx.fillText(loadCount, item.x, item.y + 30);
     });
   }, [items]);
 
