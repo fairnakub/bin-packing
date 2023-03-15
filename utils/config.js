@@ -1,12 +1,14 @@
 export const truckLoad = {
-  // width: 240,
-  // height: 500, // ยาว
-  width: 100,
-  height: 100, // ยาว
+  width: 500,
+  height: 240, // ยาว
+  //   width: 100,
+  //   height: 100, // ยาว
 };
 
+export const transportCreditPercentage = 0.04;
+
 export const freeTransferCriterion = {
-  price: 500,
+  targetPrice: 40000,
   weightLimit: 600,
   maxDistance: 30,
 };
@@ -15,8 +17,8 @@ export const productList = [
   {
     label: 'เสารั้วอัดแรงหน้า 3"',
     weight: 54,
-    width: 40,
-    height: 40,
+    width: 100,
+    height: 200,
     price: 30,
     itemCountPerLoad: 180,
     maxStack: 2,
@@ -25,8 +27,8 @@ export const productList = [
   {
     label: 'เสารั้วอัดแรงหน้า 4"',
     weight: 54,
-    width: 50,
-    height: 50,
+    width: 120,
+    height: 250,
     price: 70,
     itemCountPerLoad: 100,
     maxStack: 2,
@@ -35,8 +37,8 @@ export const productList = [
   {
     label: "อิฐตัวหนอน",
     weight: 54,
-    width: 30,
-    height: 80,
+    width: 300,
+    height: 200,
     price: 80,
     itemCountPerLoad: 40,
     maxStack: 5,

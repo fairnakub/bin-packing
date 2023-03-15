@@ -7,7 +7,13 @@ import {
   productList,
 } from "../utils";
 
-function ItemVisualization({ width, height, items, sizeMultiplier = 1 }) {
+function ItemVisualization({
+  width,
+  height,
+  renderWidth,
+  renderHeight,
+  items,
+}) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -18,12 +24,7 @@ function ItemVisualization({ width, height, items, sizeMultiplier = 1 }) {
     const colorMap = {};
 
     // Clear the canvas
-    ctx.clearRect(
-      0,
-      0,
-      canvas.width * sizeMultiplier,
-      canvas.height * sizeMultiplier
-    );
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Iterate over the items and draw each one
     items.forEach((item) => {
@@ -38,42 +39,30 @@ function ItemVisualization({ width, height, items, sizeMultiplier = 1 }) {
 
       // Draw the item block
       ctx.fillStyle = "#000";
-      ctx.fillRect(
-        item.x * sizeMultiplier,
-        item.y * sizeMultiplier,
-        item.width * sizeMultiplier,
-        item.height * sizeMultiplier
-      );
+      ctx.fillRect(item.x, item.y, item.width, item.height);
       ctx.fillStyle = color;
-      ctx.fillRect(
-        item.x * sizeMultiplier + 1,
-        item.y * sizeMultiplier + 1,
-        item.width * sizeMultiplier - 2,
-        item.height * sizeMultiplier - 2
-      );
+      ctx.fillRect(item.x + 1, item.y + 1, item.width - 2, item.height - 2);
 
       // Draw the item label on top of the block
       ctx.fillStyle = "white";
-      ctx.font = `${20 * sizeMultiplier}px sans-serif`;
-      ctx.fillText(
-        loadCount,
-        (item.x + 5) * sizeMultiplier,
-        (item.y + 20) * sizeMultiplier
-      );
+      ctx.font = `${40}px sans-serif`;
+      ctx.fillText(loadCount, item.x + 20, item.y + 60);
     });
   }, [items]);
 
   // Helper function to generate random colors
 
   return (
-    <div width={width * sizeMultiplier} height={height * sizeMultiplier}>
-      <canvas
-        ref={canvasRef}
-        width={width * sizeMultiplier}
-        height={height * sizeMultiplier}
-        style={{ border: "1px solid black" }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      width={width}
+      height={height}
+      style={{
+        border: "1px solid black",
+        width: renderWidth,
+        height: renderHeight,
+      }}
+    />
   );
 }
 
