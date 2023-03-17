@@ -17,6 +17,8 @@ import {
   Paper,
   Grid,
   IconButton,
+  Switch,
+  FormControlLabel,
 } from '@mui/material'
 import {
   stringToColor,
@@ -54,6 +56,9 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<ProductList>()
   const [selectedProductLoadCount, setSelectedProductLoadCount] = useState(1)
   const [searchValue, setSearchValue] = useState('')
+  const [splitOnWeightExceeded, setSplitOnWeightExceeded] = useState<boolean>(
+    true,
+  )
 
   const result = useMemo(() => {
     try {
@@ -71,7 +76,7 @@ export default function Home() {
           kerfSize: 0,
           selectionStrategy: SelectionStrategy.BEST_AREA_FIT,
           splitStrategy: SplitStrategy.LongLeftoverAxisSplit,
-          allowWeightLimitSplit: true,
+          allowWeightLimitSplit: splitOnWeightExceeded,
         },
       )
       return calculation
@@ -79,7 +84,7 @@ export default function Home() {
       console.log(e)
       return undefined
     }
-  }, [items, productList, truckLoad, packer])
+  }, [items, productList, truckLoad, packer, splitOnWeightExceeded])
 
   const selectedProductDetail = useMemo(
     () => productList.find((p) => p.name === selectedProduct?.name),
@@ -129,7 +134,8 @@ export default function Home() {
                 <TableHead>
                   <TableRow>
                     <TableCell>รายการสินค้า</TableCell>
-                    <TableCell align="right">น้ำหนัก</TableCell>
+                    <TableCell align="right">น้ำหนักต่อชิ้น</TableCell>
+                    <TableCell align="right">น้ำหนักต่อแพ็ค</TableCell>
                     <TableCell align="right">พื้นที่ (กว้าง x ยาว)</TableCell>
                     <TableCell align="right">ราคาต่อชิ้น</TableCell>
                     <TableCell align="right">จำนวนต่อแพ็ค</TableCell>
@@ -165,6 +171,9 @@ export default function Home() {
                       >
                         <TableCell component="th" scope="row">
                           {product.name}
+                        </TableCell>
+                        <TableCell align="right">
+                          {product.weight / Infinity}
                         </TableCell>
                         <TableCell align="right">{product.weight}</TableCell>
                         <TableCell align="right">{`${product.width} x ${product.height}`}</TableCell>
@@ -211,8 +220,6 @@ export default function Home() {
                 getOptionLabel={(option) => option.name}
                 value={selectedProduct || null}
                 isOptionEqualToValue={(option, value) => {
-                  console.log(option)
-                  console.log(value)
                   return option.name === value.name
                 }}
                 onChange={(e, value) => {
@@ -474,6 +481,15 @@ export default function Home() {
           <Typography variant="h5" fontWeight="bold">
             การคำนวณปริมาตรและการจัดส่ง
           </Typography>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={splitOnWeightExceeded}
+                onChange={(e, checked) => setSplitOnWeightExceeded(checked)}
+              />
+            }
+            label="แบ่งเที่ยวใหม่หากน้ำหนักเกิน"
+          />
           <Typography>จำนวนเที่ยวที่ต้องใช้: {result?.length}</Typography>
 
           {result
@@ -497,29 +513,31 @@ export default function Home() {
               const deepClonedArray: PackedItem[] = [
                 ...e.map((each) => ({ ...each })),
               ]
-              // const groupedItems = deepClonedArray.reduce((acc, cur) => {
-              //   const found = acc.find((x) => x.name === cur.name)
 
-              //   if (found) {
-              //     acc.map((e) => {
-              //       if (e.name === found.name) {
-              //         e.item.availableStack +=
-              //           cur.item.maxStack - cur.count
-              //         e.count += cur.count
-              //       }
-              //     })
-              //   } else {
-              //     acc.push({
-              //       ...cur,
-              //       otherDetail: {
-              //         ...cur.otherDetail,
-              //         availableStack: cur.otherDetail.maxCount - cur.count,
-              //       },
-              //     })
-              //   }
+              const groupedItems = deepClonedArray.reduce((acc, cur) => {
+                const found = acc.find((x) => x.name === cur.name)
 
-              //   return acc
-              // }, [] as PackedItem[])
+                if (found) {
+                  acc.forEach((e) => {
+                    if (e.name === found.name) {
+                      e.otherDetail.availableStack +=
+                        cur.otherDetail.maxStack - cur.count
+                      e.count += cur.count
+                      e.weight += cur.weight
+                    }
+                  })
+                } else {
+                  acc.push({
+                    ...cur,
+                    otherDetail: {
+                      ...cur.otherDetail,
+                      availableStack: cur.otherDetail.maxCount - cur.count,
+                    },
+                  })
+                }
+
+                return acc
+              }, [] as PackedItem[])
 
               const credit = transportCredit(
                 e.reduce((acc, cur) => {
@@ -529,6 +547,34 @@ export default function Home() {
                     cur.otherDetail.itemCountPerLoad)
                 }, 0),
               )
+
+              const showSuggestions = () => {
+                if (splitOnWeightExceeded) {
+                  if (
+                    credit <= 0 ||
+                    !!e.find((e) => {
+                      const targetItemDetail = productList.find(
+                        (p) => p.name === e.name,
+                      )
+
+                      return (
+                        e.otherDetail.availableStack &&
+                        e.weight + (targetItemDetail?.weight || 0) <=
+                          truckLoad.weightLimit
+                      )
+                    })
+                  ) {
+                    return true
+                  }
+                }
+                if (
+                  credit <= 0 ||
+                  !!e.find((e) => e.otherDetail.availableStack)
+                ) {
+                  return true
+                }
+                return false
+              }
 
               return (
                 <Box display="flex" flexDirection="column" mt={1} key={i}>
@@ -545,7 +591,7 @@ export default function Home() {
                       // sizeMultiplier={0.5}
                     />
                     <Box>
-                      {deepClonedArray.map((ea, ind) => {
+                      {groupedItems.map((ea, ind) => {
                         return (
                           <Box
                             key={ind}
@@ -602,7 +648,7 @@ export default function Home() {
                     บาท
                   </Typography>
 
-                  {/* {(credit <= 0 || !!e.find((e) => e.item.availableStack)) && (
+                  {showSuggestions() && (
                     <>
                       <Typography>คำแนะนำ:</Typography>
                       {credit <= 0 && (
@@ -613,23 +659,25 @@ export default function Home() {
                             {freeTransferCriterion.targetPrice -
                               e.reduce((acc, cur) => {
                                 return (acc +=
-                                  cur.item.price *
-                                  cur.item.loadCount *
-                                  cur.item.itemCountPerLoad)
+                                  cur.otherDetail.price *
+                                  cur.count *
+                                  cur.otherDetail.itemCountPerLoad)
                               }, 0)}{' '}
                           </b>
                           บาท เพื่อให้ได้เครดิตค่าจัดส่ง
                         </Typography>
                       )}
-                      {!!groupedItems.find((e) => e.item.availableStack) && (
+                      {!!groupedItems.find(
+                        (e) => e.otherDetail.availableStack,
+                      ) && (
                         <>
                           {groupedItems
-                            .filter((ea) => ea.item.availableStack)
+                            .filter((ea) => ea.otherDetail.availableStack)
                             .map((each) => {
                               return (
                                 <Typography>
-                                  สามารถเพิ่ม {each.item.name} ได้อีก{' '}
-                                  {each.item.availableStack} แพ็ค{' '}
+                                  สามารถเพิ่ม {each.name} ได้อีก{' '}
+                                  {each.otherDetail.availableStack} แพ็ค{' '}
                                   โดยไม่ทำให้เสียพื้นที่เพิ่ม
                                 </Typography>
                               )
@@ -637,7 +685,7 @@ export default function Home() {
                         </>
                       )}
                     </>
-                  )} */}
+                  )}
 
                   <Typography>สินค้า:</Typography>
                   <TableContainer component={Paper}>
@@ -651,7 +699,7 @@ export default function Home() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {e.map((item, index) => {
+                        {groupedItems.map((item, index) => {
                           const itemDetail = item.otherDetail
                           return (
                             <TableRow

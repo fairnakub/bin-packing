@@ -12,7 +12,7 @@
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.9",
     "@mui/material": "^5.11.9",
-    "guillotine-packer-with-weight-and-max-stack-count": "^0.0.6-development",
+    "guillotine-packer-with-weight-and-max-stack-count": "^0.0.13-development",
     "i": "^0.3.7",
     "next": "^13.0.6",
     "npm": "^9.6.2",
