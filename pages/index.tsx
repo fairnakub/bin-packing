@@ -25,13 +25,15 @@ import {
   visualizeItems,
   truckLoad,
   freeTransferCriterion,
-  productList,
+  productList as defaultProductList,
   transportCreditPercentage,
   findLargestAvailableRectangles,
 } from '../utils'
 import { ItemVisualization } from '../components'
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded'
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded'
+import EditIcon from '@mui/icons-material/Edit'
+import CheckIcon from '@mui/icons-material/Check'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -56,9 +58,14 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<ProductList>()
   const [selectedProductLoadCount, setSelectedProductLoadCount] = useState(1)
   const [searchValue, setSearchValue] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
   const [splitOnWeightExceeded, setSplitOnWeightExceeded] = useState<boolean>(
     true,
   )
+  const [productList, setProductList] = useState([...defaultProductList])
+  const [stagedProductList, setStagedProductList] = useState([
+    ...defaultProductList,
+  ])
 
   const result = useMemo(() => {
     try {
@@ -110,9 +117,50 @@ export default function Home() {
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: 1 }}>
-            <Typography variant="h5" fontWeight="bold">
-              รายการสินค้า
-            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Typography variant="h5" fontWeight="bold">
+                รายการสินค้า
+              </Typography>
+              <Box>
+                {!isEditing ? (
+                  <IconButton
+                    onClick={() => {
+                      setIsEditing(true)
+                      setStagedProductList(productList)
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                ) : (
+                  <>
+                    <IconButton
+                      color="success"
+                      onClick={() => {
+                        setIsEditing(false)
+                        setProductList(stagedProductList)
+                        setStagedProductList(stagedProductList)
+                      }}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                    <IconButton
+                      color="error"
+                      onClick={() => {
+                        setIsEditing(false)
+                        setStagedProductList(productList)
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </>
+                )}
+              </Box>
+            </Box>
             <TextField
               InputProps={{
                 startAdornment: <SearchIcon />,
@@ -143,47 +191,198 @@ export default function Home() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {productList
-                    .filter((p) => p.name.includes(searchValue))
-                    .map((product, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          '&:last-child td, &:last-child th': { border: 0 },
-                          cursor: 'pointer',
-                          ':hover': {
+                  {isEditing &&
+                    stagedProductList
+                      .filter((p) => p.name.includes(searchValue))
+                      .map((product, index) => (
+                        <TableRow
+                          key={index}
+                          sx={{
+                            '&:last-child td, &:last-child th': { border: 0 },
                             cursor: 'pointer',
+                          }}
+                          onClick={() => {
+                            setSelectedProduct(product)
+                          }}
+                        >
+                          <TableCell component="th" scope="row">
+                            {product.name}
+                          </TableCell>
+                          <TableCell align="right">-</TableCell>
+                          <TableCell align="right">
+                            <TextField
+                              sx={{ minWidth: 80 }}
+                              value={product.weight}
+                              type="number"
+                              onChange={(e) => {
+                                setStagedProductList((prev) => {
+                                  return prev.map((each) => {
+                                    if (each.name === product.name) {
+                                      return {
+                                        ...each,
+                                        weight: parseInt(e.target.value, 10),
+                                      }
+                                    }
+                                    return each
+                                  })
+                                })
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              columnGap={1}
+                            >
+                              {
+                                <TextField
+                                  sx={{ minWidth: 80 }}
+                                  value={product.width}
+                                  type="number"
+                                  onChange={(e) => {
+                                    setStagedProductList((prev) => {
+                                      return prev.map((each) => {
+                                        if (each.name === product.name) {
+                                          return {
+                                            ...each,
+                                            width: parseInt(e.target.value, 10),
+                                          }
+                                        }
+                                        return each
+                                      })
+                                    })
+                                  }}
+                                />
+                              }
+                              {' x '}
+                              <TextField
+                                sx={{ minWidth: 80 }}
+                                value={product.height}
+                                type="number"
+                                onChange={(e) => {
+                                  setStagedProductList((prev) => {
+                                    return prev.map((each) => {
+                                      if (each.name === product.name) {
+                                        return {
+                                          ...each,
+                                          height: parseInt(e.target.value, 10),
+                                        }
+                                      }
+                                      return each
+                                    })
+                                  })
+                                }}
+                              />
+                            </Box>
+                          </TableCell>
+                          <TableCell align="right">
+                            <TextField
+                              sx={{ minWidth: 80 }}
+                              value={product.price}
+                              type="number"
+                              onChange={(e) => {
+                                setStagedProductList((prev) => {
+                                  return prev.map((each) => {
+                                    if (each.name === product.name) {
+                                      return {
+                                        ...each,
+                                        price: parseInt(e.target.value, 10),
+                                      }
+                                    }
+                                    return each
+                                  })
+                                })
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            <TextField
+                              sx={{ minWidth: 80 }}
+                              value={product.itemCountPerLoad}
+                              type="number"
+                              onChange={(e) => {
+                                setStagedProductList((prev) => {
+                                  return prev.map((each) => {
+                                    if (each.name === product.name) {
+                                      return {
+                                        ...each,
+                                        itemCountPerLoad: parseInt(
+                                          e.target.value,
+                                          10,
+                                        ),
+                                      }
+                                    }
+                                    return each
+                                  })
+                                })
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            <TextField
+                              sx={{ minWidth: 80 }}
+                              value={product.maxCount}
+                              type="number"
+                              onChange={(e) => {
+                                setStagedProductList((prev) => {
+                                  return prev.map((each) => {
+                                    if (each.name === product.name) {
+                                      return {
+                                        ...each,
+                                        maxCount: parseInt(e.target.value, 10),
+                                      }
+                                    }
+                                    return each
+                                  })
+                                })
+                              }}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  {!isEditing &&
+                    productList
+                      .filter((p) => p.name.includes(searchValue))
+                      .map((product, index) => (
+                        <TableRow
+                          key={index}
+                          sx={{
+                            '&:last-child td, &:last-child th': { border: 0 },
+                            cursor: 'pointer',
+                            ':hover': {
+                              cursor: 'pointer',
+                              backgroundColor:
+                                selectedProduct?.name &&
+                                selectedProduct.name === product.name
+                                  ? undefined
+                                  : '#fcf2d7',
+                            },
                             backgroundColor:
                               selectedProduct?.name &&
                               selectedProduct.name === product.name
-                                ? undefined
-                                : '#fcf2d7',
-                          },
-                          backgroundColor:
-                            selectedProduct?.name &&
-                            selectedProduct.name === product.name
-                              ? '#FFAA21'
-                              : undefined,
-                        }}
-                        onClick={() => {
-                          setSelectedProduct(product)
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {product.name}
-                        </TableCell>
-                        <TableCell align="right">
-                          {product.weight / Infinity}
-                        </TableCell>
-                        <TableCell align="right">{product.weight}</TableCell>
-                        <TableCell align="right">{`${product.width} x ${product.height}`}</TableCell>
-                        <TableCell align="right">{product.price}</TableCell>
-                        <TableCell align="right">
-                          {product.itemCountPerLoad}
-                        </TableCell>
-                        <TableCell align="right">{product.maxCount}</TableCell>
-                      </TableRow>
-                    ))}
+                                ? '#FFAA21'
+                                : undefined,
+                          }}
+                          onClick={() => {
+                            setSelectedProduct(product)
+                          }}
+                        >
+                          <TableCell component="th" scope="row">
+                            {product.name}
+                          </TableCell>
+                          <TableCell align="right">-</TableCell>
+                          <TableCell align="right">{product.weight}</TableCell>
+                          <TableCell align="right">{`${product.width} x ${product.height}`}</TableCell>
+                          <TableCell align="right">{product.price}</TableCell>
+                          <TableCell align="right">
+                            {product.itemCountPerLoad}
+                          </TableCell>
+                          <TableCell align="right">
+                            {product.maxCount}
+                          </TableCell>
+                        </TableRow>
+                      ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -481,15 +680,17 @@ export default function Home() {
           <Typography variant="h5" fontWeight="bold">
             การคำนวณปริมาตรและการจัดส่ง
           </Typography>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={splitOnWeightExceeded}
-                onChange={(e, checked) => setSplitOnWeightExceeded(checked)}
-              />
-            }
-            label="แบ่งเที่ยวใหม่หากน้ำหนักเกิน"
-          />
+          <Box marginRight="auto">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={splitOnWeightExceeded}
+                  onChange={(e, checked) => setSplitOnWeightExceeded(checked)}
+                />
+              }
+              label="แบ่งเที่ยวใหม่หากน้ำหนักเกิน"
+            />
+          </Box>
           <Typography>จำนวนเที่ยวที่ต้องใช้: {result?.length}</Typography>
 
           {result
@@ -576,6 +777,10 @@ export default function Home() {
                 return false
               }
 
+              const totalWeight = e.reduce((acc, cur) => {
+                return (acc += cur.weight)
+              }, 0)
+
               return (
                 <Box display="flex" flexDirection="column" mt={1} key={i}>
                   <Typography fontWeight="bold">เที่ยวที่ {i + 1}:</Typography>
@@ -625,6 +830,31 @@ export default function Home() {
                       100
                     ).toFixed(2)}
                     %
+                  </Typography>
+                  <Typography>
+                    น้ำหนักรวม:{' '}
+                    <b
+                      style={{
+                        color:
+                          totalWeight > truckLoad.weightLimit
+                            ? 'red'
+                            : undefined,
+                      }}
+                    >
+                      {' '}
+                      {totalWeight.toFixed(2)}{' '}
+                    </b>
+                    กก.{' '}
+                    <b
+                      style={{
+                        color: 'red',
+                      }}
+                    >
+                      {totalWeight > truckLoad.weightLimit &&
+                        ` น้ำหนักเกินมา ${
+                          totalWeight - truckLoad.weightLimit
+                        } กก.`}
+                    </b>
                   </Typography>
                   <Typography>
                     มูลค่ารวม:{' '}
