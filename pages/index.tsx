@@ -97,6 +97,8 @@ export default function Home() {
     [freeTransferCriterion],
   )
 
+  console.log(items)
+
   return (
     <div className={styles.container}>
       <Head>

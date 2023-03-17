@@ -1108,10 +1108,10 @@ graceful-fs@^4.2.10, graceful-fs@^4.2.6:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
 
-guillotine-packer-with-weight-and-max-stack-count@^0.0.1-development:
-  version "0.0.1-development"
-  resolved "https://registry.yarnpkg.com/guillotine-packer-with-weight-and-max-stack-count/-/guillotine-packer-with-weight-and-max-stack-count-0.0.1-development.tgz#baece36300c98e230965933d515415c29787f0e3"
-  integrity sha512-R1ytRFhTgXqVMar82rUt+mvrCxVS0cnNJ0LnGSJmaLaxQ0R1vQFEgT1pIqHh2JbFRguu1aFb4MLz8G94M5YEqw==
+guillotine-packer-with-weight-and-max-stack-count@^0.0.5-development:
+  version "0.0.5-development"
+  resolved "https://registry.yarnpkg.com/guillotine-packer-with-weight-and-max-stack-count/-/guillotine-packer-with-weight-and-max-stack-count-0.0.5-development.tgz#429be5e2eeb3b9d0b920398462c18ad4b373dd51"
+  integrity sha512-JpNQ/Uw/f/SygkQT6m4RpvvREnixHT+/X/VwBUcN/I+BmUbItS1tY9oMXkB0d4hD2J2McRuDcyRW8Q6pabYB+g==
   dependencies:
     debug "^4.1.1"
 
