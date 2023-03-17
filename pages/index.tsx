@@ -68,6 +68,7 @@ export default function Home() {
           itemConfig: productList,
         },
         {
+          kerfSize: 0,
           selectionStrategy: SelectionStrategy.BEST_AREA_FIT,
           splitStrategy: SplitStrategy.LongLeftoverAxisSplit,
           allowWeightLimitSplit: true,
@@ -79,8 +80,6 @@ export default function Home() {
       return undefined
     }
   }, [items, productList, truckLoad, packer])
-
-  console.log(result)
 
   const selectedProductDetail = useMemo(
     () => productList.find((p) => p.name === selectedProduct?.name),
@@ -96,8 +95,6 @@ export default function Home() {
     },
     [freeTransferCriterion],
   )
-
-  console.log(items)
 
   return (
     <div className={styles.container}>
