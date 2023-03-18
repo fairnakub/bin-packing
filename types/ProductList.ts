@@ -1,5 +1,6 @@
 type ProductList = {
   name: string;
+  itemWeight: number;
   weight: number;
   width: number;
   height: number;

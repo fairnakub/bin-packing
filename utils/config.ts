@@ -30,6 +30,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสารั้ว หน้า 3" x 100',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 45,
@@ -40,6 +41,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสารั้ว หน้า 3" x 150',
     weight: 80, // TODO
+    itemWeight: 0,
     width: 90,
     height: 150,
     price: 45 * 1.5,
@@ -50,6 +52,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสารั้ว หน้า 3" x 200',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 90,
     height: 200,
     price: 45 * 2,
@@ -60,6 +63,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสารั้ว หน้า 3" x 250',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 90,
     height: 250,
     price: 45 * 2.5,
@@ -70,6 +74,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสารั้ว หน้า 4" x 200',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 90,
     height: 200,
     price: 65 * 2,
@@ -80,6 +85,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสารั้ว หน้า 4" x 250',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 90,
     height: 250,
     price: 65 * 2.5,
@@ -90,6 +96,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสาบ้าน หน้า 4" x 100',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 20,
     height: 100,
     price: 130,
@@ -100,6 +107,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสาบ้าน หน้า 4" x 150',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 20,
     height: 150,
     price: 110 * 1.5,
@@ -110,6 +118,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสาบ้าน หน้า 4" x 200',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 20,
     height: 200,
     price: 110 * 2,
@@ -121,6 +130,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 4" x 250',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 20,
     height: 250,
     price: 105 * 2.5,
@@ -131,6 +141,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสาบ้าน หน้า 4" x 300',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 20,
     height: 300,
     price: 105 * 3,
@@ -141,6 +152,7 @@ export const productList: ProductList[] = [
   {
     name: 'เสาบ้าน หน้า 5" x 100',
     weight: 0, // TODO
+    itemWeight: 0,
     width: 26.5,
     height: 100,
     price: 160,
@@ -152,6 +164,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 5" x 150',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 26.5,
     height: 150,
     price: 145 * 1.5,
@@ -163,6 +176,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 5" x 200',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 26.5,
     height: 200,
     price: 145 * 2,
@@ -174,6 +188,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 5" x 250',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 26.5,
     height: 250,
     price: 145 * 2.5,
@@ -185,6 +200,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 5" x 300',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 26.5,
     height: 300,
     price: 145 * 3,
@@ -196,6 +212,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 5" x 350',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 26.5,
     height: 350,
     price: 145 * 3.5,
@@ -207,6 +224,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 6" x 100',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 30,
     height: 100,
     price: 240,
@@ -218,6 +236,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 6" x 150',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 30,
     height: 150,
     price: 220 * 1.5,
@@ -229,6 +248,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 6" x 200',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 30,
     height: 200,
     price: 220 * 2,
@@ -240,6 +260,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 6" x 250',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 30,
     height: 250,
     price: 230 * 2.5,
@@ -251,6 +272,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 6" x 300',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 30,
     height: 300,
     price: 230 * 3,
@@ -262,6 +284,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 6" x 350',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 30,
     height: 350,
     price: 230 * 3.5,
@@ -273,6 +296,7 @@ export const productList: ProductList[] = [
     name: 'เสาบ้าน หน้า 6" x 400',
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 30,
     height: 400,
     price: 230 * 3.5,
@@ -283,6 +307,7 @@ export const productList: ProductList[] = [
   {
     name: "อิฐตัวหนอน",
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 5.5,
@@ -293,6 +318,7 @@ export const productList: ProductList[] = [
   {
     name: "อิฐตัวหนอน (สี)",
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 6.75,
@@ -303,6 +329,7 @@ export const productList: ProductList[] = [
   {
     name: "อิฐตัวไอ",
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 6,
@@ -313,6 +340,7 @@ export const productList: ProductList[] = [
   {
     name: "อิฐตัวไอ (สี)",
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 7.25,
@@ -323,6 +351,7 @@ export const productList: ProductList[] = [
   {
     name: "อิฐสี่เหลี่ยม",
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 3,
@@ -334,6 +363,7 @@ export const productList: ProductList[] = [
     name: "อิฐสี่เหลี่ยม (สี)",
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 4.25,
@@ -345,6 +375,7 @@ export const productList: ProductList[] = [
     name: "อิฐแปดเหลี่ยม",
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 8.5,
@@ -356,6 +387,7 @@ export const productList: ProductList[] = [
     name: "อิฐแปดเหลี่ยม (สี)",
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 1,
     height: 1,
     price: 9.75,
@@ -367,6 +399,7 @@ export const productList: ProductList[] = [
     name: "อิฐทางเดิน",
 
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 22,
@@ -377,6 +410,7 @@ export const productList: ProductList[] = [
   {
     name: "บล็อคปูหญ้า (หน้าเรียบ)",
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 26,
@@ -387,6 +421,7 @@ export const productList: ProductList[] = [
   {
     name: "บล็อคปูหญ้า (หน้าไม่เรียบ)",
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 23,
@@ -397,6 +432,7 @@ export const productList: ProductList[] = [
   {
     name: "ขอบคันหิน",
     weight: 0, // TODO
+    itemWeight: 0,
     width: 100,
     height: 100,
     price: 145,

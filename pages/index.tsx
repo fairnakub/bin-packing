@@ -64,8 +64,10 @@ export default function Home() {
   const [splitOnWeightExceeded, setSplitOnWeightExceeded] = useState<boolean>(
     true,
   )
-  const [productList, setProductList] = useState(cloneDeep(defaultProductList))
-  const [stagedProductList, setStagedProductList] = useState(
+  const [productList, setProductList] = useState<ProductList[]>(
+    cloneDeep(defaultProductList),
+  )
+  const [stagedProductList, setStagedProductList] = useState<ProductList[]>(
     cloneDeep(defaultProductList),
   )
   const [truckLoad, setTruckLoad] = useState(cloneDeep(defaultTruckLoad))
@@ -291,7 +293,7 @@ export default function Home() {
             <TextField
               InputProps={{
                 startAdornment: <SearchIcon />,
-                endAdornment: (
+                endAdornment: searchValue ? (
                   <IconButton
                     onClick={() => {
                       setSearchValue('')
@@ -299,7 +301,7 @@ export default function Home() {
                   >
                     <CloseIcon />
                   </IconButton>
-                ),
+                ) : undefined,
               }}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -309,9 +311,11 @@ export default function Home() {
                 <TableHead>
                   <TableRow>
                     <TableCell>รายการสินค้า</TableCell>
-                    <TableCell align="right">น้ำหนักต่อชิ้น</TableCell>
-                    <TableCell align="right">น้ำหนักต่อแพ็ค</TableCell>
-                    <TableCell align="right">พื้นที่ (กว้าง x ยาว)</TableCell>
+                    <TableCell align="right">น้ำหนักต่อชิ้น (กก.)</TableCell>
+                    <TableCell align="right">น้ำหนักต่อแพ็ค (กก.)</TableCell>
+                    <TableCell align="right">
+                      พื้นที่ (กว้าง (ซม.) x ยาว (ซม.))
+                    </TableCell>
                     <TableCell align="right">ราคาต่อชิ้น</TableCell>
                     <TableCell align="right">จำนวนต่อแพ็ค</TableCell>
                     <TableCell align="right">วางซ้อนได้สูงสุด</TableCell>
@@ -339,19 +343,22 @@ export default function Home() {
                           >
                             {product.name}
                           </TableCell>
-                          <TableCell align="right">-</TableCell>
                           <TableCell align="right">
                             <TextField
                               sx={{ minWidth: 80 }}
-                              value={product.weight}
+                              value={product.itemWeight}
                               type="number"
                               onChange={(e) => {
                                 setStagedProductList((prev) => {
+                                  const value = parseFloat(e.target.value)
                                   return prev.map((each) => {
                                     if (each.name === product.name) {
                                       return {
                                         ...each,
-                                        weight: parseInt(e.target.value, 10),
+                                        itemWeight: value,
+                                        weight:
+                                          (value || 0) *
+                                          product.itemCountPerLoad,
                                       }
                                     }
                                     return each
@@ -360,6 +367,7 @@ export default function Home() {
                               }}
                             />
                           </TableCell>
+                          <TableCell align="right">{product.weight}</TableCell>
                           <TableCell align="right">
                             <Box
                               display="flex"
@@ -376,7 +384,7 @@ export default function Home() {
                                       if (each.name === product.name) {
                                         return {
                                           ...each,
-                                          width: parseInt(e.target.value, 10),
+                                          width: parseFloat(e.target.value),
                                         }
                                       }
                                       return each
@@ -395,7 +403,7 @@ export default function Home() {
                                       if (each.name === product.name) {
                                         return {
                                           ...each,
-                                          height: parseInt(e.target.value, 10),
+                                          height: parseFloat(e.target.value),
                                         }
                                       }
                                       return each
@@ -416,7 +424,7 @@ export default function Home() {
                                     if (each.name === product.name) {
                                       return {
                                         ...each,
-                                        price: parseInt(e.target.value, 10),
+                                        price: parseFloat(e.target.value),
                                       }
                                     }
                                     return each
@@ -500,10 +508,18 @@ export default function Home() {
                           <TableCell component="th" scope="row">
                             {product.name}
                           </TableCell>
-                          <TableCell align="right">-</TableCell>
-                          <TableCell align="right">{product.weight}</TableCell>
-                          <TableCell align="right">{`${product.width} x ${product.height}`}</TableCell>
-                          <TableCell align="right">{product.price}</TableCell>
+                          <TableCell align="right">
+                            {product.itemWeight.toFixed(3)}
+                          </TableCell>
+                          <TableCell align="right">
+                            {product.weight.toFixed(3)}
+                          </TableCell>
+                          <TableCell align="right">{`${product.width.toFixed(
+                            2,
+                          )} x ${product.height.toFixed(2)}`}</TableCell>
+                          <TableCell align="right">
+                            {product.price.toFixed(2)}
+                          </TableCell>
                           <TableCell align="right">
                             {product.itemCountPerLoad}
                           </TableCell>
@@ -658,7 +674,7 @@ export default function Home() {
                 </Typography>
                 <Typography variant="body2" mt={1} fontWeight="bold">
                   น้ำหนักรวม:{' '}
-                  {selectedProductDetail.weight *
+                  {selectedProductDetail.itemWeight *
                     selectedProductLoadCount *
                     selectedProductDetail?.itemCountPerLoad}{' '}
                   กก.
