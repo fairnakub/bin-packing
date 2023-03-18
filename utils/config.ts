@@ -3,7 +3,7 @@ import ProductList from "../types/ProductList";
 export const truckLoad = {
   width: 500,
   height: 240, // ยาว
-  weightLimit: 240,
+  weightLimit: 11600,
   //   width: 100,
   //   height: 100, // ยาว
 };
@@ -40,7 +40,7 @@ export const productList: ProductList[] = [
   },
   {
     name: 'เสารั้ว หน้า 3" x 150',
-    weight: 80, // TODO
+    weight: 0, // TODO
     itemWeight: 0,
     width: 90,
     height: 150,
