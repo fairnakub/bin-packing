@@ -175,9 +175,11 @@ export default function Home() {
                   <TableHead>
                     <TableRow>
                       <TableCell align="center">
-                        พื้นที่ (กว้าง x ยาว)
+                        พื้นที่ (กว้าง (ซม.) x ยาว (ซม.))
                       </TableCell>
-                      <TableCell align="center">น้ำหนักบรรทุกสูงสุด</TableCell>
+                      <TableCell align="center">
+                        น้ำหนักบรรทุกสูงสุด (กก.)
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -273,6 +275,17 @@ export default function Home() {
                         setIsProductEditing(false)
                         setProductList(stagedProductList)
                         setStagedProductList(stagedProductList)
+                        setItems((prev) =>
+                          prev.map((e) => {
+                            const targetProduct = stagedProductList.find(
+                              (ea) => ea.name === e.name,
+                            )
+                            if (targetProduct) {
+                              return { ...e, ...targetProduct }
+                            }
+                            return e
+                          }),
+                        )
                       }}
                     >
                       <CheckIcon />
@@ -314,7 +327,7 @@ export default function Home() {
                     <TableCell align="right">น้ำหนักต่อชิ้น (กก.)</TableCell>
                     <TableCell align="right">น้ำหนักต่อแพ็ค (กก.)</TableCell>
                     <TableCell align="right">
-                      พื้นที่ (กว้าง (ซม.) x ยาว (ซม.))
+                      พื้นที่แพ็ค (กว้าง (ซม.) x ยาว (ซม.))
                     </TableCell>
                     <TableCell align="right">ราคาต่อชิ้น</TableCell>
                     <TableCell align="right">จำนวนต่อแพ็ค</TableCell>
@@ -708,9 +721,11 @@ export default function Home() {
                 <TableHead>
                   <TableRow>
                     <TableCell>รายการสินค้า</TableCell>
-                    <TableCell align="right">น้ำหนัก</TableCell>
-                    <TableCell align="right">พื้นที่ (กว้าง x ยาว)</TableCell>
-                    <TableCell align="right">จำนวนแพ็ค</TableCell>
+                    <TableCell align="right">น้ำหนักต่อแพ็ค (กก.)</TableCell>
+                    <TableCell align="right">
+                      พื้นที่แพ็ค (กว้าง (ซม.) x ยาว (ซม.))
+                    </TableCell>
+                    <TableCell align="center">จำนวนแพ็ค</TableCell>
                     <TableCell align="right">จำนวนชิ้นรวม</TableCell>
                     <TableCell align="right">มูลค่ารวม</TableCell>
                     <TableCell align="right"></TableCell>
@@ -727,9 +742,13 @@ export default function Home() {
                       <TableCell component="th" scope="row">
                         {item.name}
                       </TableCell>
-                      <TableCell align="right">{item.weight}</TableCell>
-                      <TableCell align="right">{`${item.width} x ${item.height}`}</TableCell>
                       <TableCell align="right">
+                        {item.weight.toFixed(3)}
+                      </TableCell>
+                      <TableCell align="right">{`${item.width.toFixed(
+                        2,
+                      )} x ${item.height.toFixed(2)}`}</TableCell>
+                      <TableCell align="center">
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <IconButton
                             disabled={
@@ -793,7 +812,11 @@ export default function Home() {
                         {item.itemCountPerLoad * item.count}
                       </TableCell>
                       <TableCell align="right">
-                        {item.itemCountPerLoad * item.count * item.price}
+                        {(
+                          item.itemCountPerLoad *
+                          item.count *
+                          item.price
+                        ).toFixed(2)}
                       </TableCell>
                       <TableCell align="right">
                         <Button
@@ -1093,9 +1116,11 @@ export default function Home() {
                                 {item.count * itemDetail.itemCountPerLoad}
                               </TableCell>
                               <TableCell align="right">
-                                {item.count *
+                                {(
+                                  item.count *
                                   itemDetail.itemCountPerLoad *
-                                  itemDetail.price}
+                                  itemDetail.price
+                                ).toFixed(2)}
                               </TableCell>
                             </TableRow>
                           )
