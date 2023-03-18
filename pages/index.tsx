@@ -788,6 +788,15 @@ export default function Home() {
                                     return ea
                                   })
                                 })
+                              } else if (parseInt(e.target.value, 10) < 1) {
+                                setItems((prev) => {
+                                  return prev.map((ea) => {
+                                    if (ea.name === item.name) {
+                                      ea.count = 1
+                                    }
+                                    return ea
+                                  })
+                                })
                               }
                             }}
                           />
