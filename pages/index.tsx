@@ -23,7 +23,7 @@ import {
 import {
   stringToColor,
   visualizeItems,
-  truckLoad,
+  truckLoad as defaultTruckLoad,
   freeTransferCriterion,
   productList as defaultProductList,
   transportCreditPercentage,
@@ -44,6 +44,7 @@ import {
 import { Item } from 'guillotine-packer-with-weight-and-max-stack-count/dist/types/types'
 import ProductList from '../types/ProductList'
 import { PackedItem } from 'guillotine-packer-with-weight-and-max-stack-count/dist/types/pack-strategy'
+import { cloneDeep } from 'lodash'
 
 export default function Home() {
   //     {
@@ -58,14 +59,19 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<ProductList>()
   const [selectedProductLoadCount, setSelectedProductLoadCount] = useState(1)
   const [searchValue, setSearchValue] = useState('')
-  const [isEditing, setIsEditing] = useState(false)
+  const [isProductEditing, setIsProductEditing] = useState(false)
+  const [isTruckEditing, setIsTruckEditing] = useState(false)
   const [splitOnWeightExceeded, setSplitOnWeightExceeded] = useState<boolean>(
     true,
   )
-  const [productList, setProductList] = useState([...defaultProductList])
-  const [stagedProductList, setStagedProductList] = useState([
-    ...defaultProductList,
-  ])
+  const [productList, setProductList] = useState(cloneDeep(defaultProductList))
+  const [stagedProductList, setStagedProductList] = useState(
+    cloneDeep(defaultProductList),
+  )
+  const [truckLoad, setTruckLoad] = useState(cloneDeep(defaultTruckLoad))
+  const [stagedTruckLoad, setStagedTruckLoad] = useState(
+    cloneDeep(defaultTruckLoad),
+  )
 
   const result = useMemo(() => {
     try {
@@ -117,6 +123,127 @@ export default function Home() {
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: 1 }}>
+            <Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography variant="h5" fontWeight="bold">
+                  ขนาดการบรรทุก
+                </Typography>
+                <Box>
+                  {!isTruckEditing ? (
+                    <IconButton
+                      onClick={() => {
+                        setIsTruckEditing(true)
+                        setStagedTruckLoad(truckLoad)
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  ) : (
+                    <>
+                      <IconButton
+                        color="success"
+                        onClick={() => {
+                          setIsTruckEditing(false)
+                          setTruckLoad(stagedTruckLoad)
+                          setStagedTruckLoad(stagedTruckLoad)
+                        }}
+                      >
+                        <CheckIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => {
+                          setIsTruckEditing(false)
+                          setStagedTruckLoad(truckLoad)
+                        }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </>
+                  )}
+                </Box>
+              </Box>
+              <TableContainer component={Paper}>
+                <Table aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">
+                        พื้นที่ (กว้าง x ยาว)
+                      </TableCell>
+                      <TableCell align="center">น้ำหนักบรรทุกสูงสุด</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow
+                      sx={{
+                        '&:last-child td, &:last-child th': { border: 0 },
+                      }}
+                    >
+                      {isTruckEditing ? (
+                        <>
+                          <TableCell align="center">
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              columnGap={1}
+                            >
+                              <TextField
+                                sx={{ minWidth: 80 }}
+                                value={stagedTruckLoad.width}
+                                type="number"
+                                onChange={(e) => {
+                                  setStagedTruckLoad((prev) => {
+                                    return { ...prev, width: e.target.value }
+                                  })
+                                }}
+                              />
+                              {' x '}
+                              <TextField
+                                sx={{ minWidth: 80 }}
+                                value={stagedTruckLoad.height}
+                                type="number"
+                                onChange={(e) => {
+                                  setStagedTruckLoad((prev) => {
+                                    return { ...prev, height: e.target.value }
+                                  })
+                                }}
+                              />
+                            </Box>
+                          </TableCell>
+                          <TableCell align="center">
+                            <TextField
+                              sx={{ minWidth: 80 }}
+                              value={stagedTruckLoad.weightLimit}
+                              type="number"
+                              onChange={(e) => {
+                                setStagedTruckLoad((prev) => {
+                                  return {
+                                    ...prev,
+                                    weightLimit: e.target.value,
+                                  }
+                                })
+                              }}
+                            />
+                          </TableCell>
+                        </>
+                      ) : (
+                        <>
+                          <TableCell align="center">{`${truckLoad.width} x ${truckLoad.height}`}</TableCell>
+                          <TableCell align="center">
+                            {truckLoad.weightLimit}
+                          </TableCell>
+                        </>
+                      )}
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
             <Box
               sx={{
                 display: 'flex',
@@ -127,10 +254,10 @@ export default function Home() {
                 รายการสินค้า
               </Typography>
               <Box>
-                {!isEditing ? (
+                {!isProductEditing ? (
                   <IconButton
                     onClick={() => {
-                      setIsEditing(true)
+                      setIsProductEditing(true)
                       setStagedProductList(productList)
                     }}
                   >
@@ -141,7 +268,7 @@ export default function Home() {
                     <IconButton
                       color="success"
                       onClick={() => {
-                        setIsEditing(false)
+                        setIsProductEditing(false)
                         setProductList(stagedProductList)
                         setStagedProductList(stagedProductList)
                       }}
@@ -151,7 +278,7 @@ export default function Home() {
                     <IconButton
                       color="error"
                       onClick={() => {
-                        setIsEditing(false)
+                        setIsProductEditing(false)
                         setStagedProductList(productList)
                       }}
                     >
@@ -191,7 +318,7 @@ export default function Home() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {isEditing &&
+                  {isProductEditing &&
                     stagedProductList
                       .filter((p) => p.name.includes(searchValue))
                       .map((product, index) => (
@@ -205,7 +332,11 @@ export default function Home() {
                             setSelectedProduct(product)
                           }}
                         >
-                          <TableCell component="th" scope="row">
+                          <TableCell
+                            component="th"
+                            scope="row"
+                            sx={{ minWidth: 120 }}
+                          >
                             {product.name}
                           </TableCell>
                           <TableCell align="right">-</TableCell>
@@ -235,26 +366,24 @@ export default function Home() {
                               alignItems="center"
                               columnGap={1}
                             >
-                              {
-                                <TextField
-                                  sx={{ minWidth: 80 }}
-                                  value={product.width}
-                                  type="number"
-                                  onChange={(e) => {
-                                    setStagedProductList((prev) => {
-                                      return prev.map((each) => {
-                                        if (each.name === product.name) {
-                                          return {
-                                            ...each,
-                                            width: parseInt(e.target.value, 10),
-                                          }
+                              <TextField
+                                sx={{ minWidth: 80 }}
+                                value={product.width}
+                                type="number"
+                                onChange={(e) => {
+                                  setStagedProductList((prev) => {
+                                    return prev.map((each) => {
+                                      if (each.name === product.name) {
+                                        return {
+                                          ...each,
+                                          width: parseInt(e.target.value, 10),
                                         }
-                                        return each
-                                      })
+                                      }
+                                      return each
                                     })
-                                  }}
-                                />
-                              }
+                                  })
+                                }}
+                              />
                               {' x '}
                               <TextField
                                 sx={{ minWidth: 80 }}
@@ -341,7 +470,7 @@ export default function Home() {
                           </TableCell>
                         </TableRow>
                       ))}
-                  {!isEditing &&
+                  {!isProductEditing &&
                     productList
                       .filter((p) => p.name.includes(searchValue))
                       .map((product, index) => (
